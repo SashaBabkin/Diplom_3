@@ -19,8 +19,8 @@ public class BaseTest {
             options.setBinary("C:\\Users\\IdeaPad 5 Pro\\AppData\\Local\\Yandex\\YandexBrowser\\Application\\browser.exe\"");
             driver = new ChromeDriver(options);
         } else if (browser.equalsIgnoreCase("chrome")) {
-            WebDriverManager.chromedriver().setup();
-            driver = new ChromeDriver();
+           WebDriverManager.chromedriver().setup();
+           driver = new ChromeDriver();
         }
 
         driver.get(URL);

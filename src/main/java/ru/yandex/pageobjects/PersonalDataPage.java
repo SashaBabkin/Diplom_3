@@ -11,20 +11,26 @@ import java.time.Duration;
 public class PersonalDataPage extends BasePage {
 
     //Кнопка "Профиль"
-    private String profileLink = ".//*[@id=\"root\"]/div/main/div/nav/ul/li[1]/a";
-    //Кнопка "История заказов"
-    private String orderHistoryLink = ".//*[@id=\"root\"]/div/main/div/nav/ul/li[2]/a";
+    private String profileLink = ".//a[text()='Профиль']";
     //Кнопка "Выход"
-    private String exitLink = ".//*[@id=\"root\"]/div/main/div/nav/ul/li[3]/button";
+    private String exitLink = ".//button[text()='Выход']";
     //Ссылка "Конструктор" в шапке
-    private String constructorLink = ".//*[@id=\"root\"]/div/header/nav/ul/li[1]/a/p";
+    private String constructorLink = ".//a[@class='AppHeader_header__link__3D_hX' and @href='/']";
     //Логотип StellarBurgers
-    private String stellarBurgersLogo = ".//*[@id=\"root\"]/div/header/nav/div/a";
+    private String stellarBurgersLogo = ".//div[@class='AppHeader_header__logo__2D0X2']/a[@href='/']";
     //Раздел "Соберите бургер Конструктора"
-    private String makeBurgerZone = ".//*[@id=\"root\"]/div/main/section[1]/h1";
+    private String makeBurgerZone = ".//div[@class='BurgerIngredients_ingredients__menuContainer__Xu3Mo']";
 
     public PersonalDataPage(WebDriver driver) {
         super(driver);
+    }
+
+
+    //Ожидание загрузки личного кабинета
+    @Step("Wait till personal account page is loaded")
+    public void waitOfVisibilityExitButton() {
+        new WebDriverWait(driver, 3)
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(exitLink)));
     }
 
     //Проверка наличия ссылки-переключателя "Профиль"
@@ -47,14 +53,20 @@ public class PersonalDataPage extends BasePage {
 
     //Проверка перехода в Конструктор
     @Step("Checking the switch to Constructor")
-    public void checkSwitchToConstructor() {
-        driver.findElement(By.xpath(makeBurgerZone)).isDisplayed();
+    public boolean checkSwitchToConstructor() {
+        return driver.findElement(By.xpath(makeBurgerZone)).isDisplayed();
     }
 
     //Выход из личного кабинета (клик по кнопке "Выход")
     @Step("Click Exit button - logging out")
     public void clickExitAccountButton() {
         driver.findElement(By.xpath(exitLink)).click();
+    }
+
+    //
+    @Step("Check visibility of Exit button")
+    public boolean exitButtonIsDisplayed() {
+        return driver.findElement(By.xpath(exitLink)).isDisplayed();
     }
 
 

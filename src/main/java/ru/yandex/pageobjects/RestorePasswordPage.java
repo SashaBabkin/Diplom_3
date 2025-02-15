@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver;
 public class RestorePasswordPage extends BasePage {
 
     //ссылка "Войти" (Вспомнили пароль?)
-    private String loginLink = ".//*[@id=\"root\"]/div/main/div/div/p/a";
+    private String loginLink = ".//a[text()='Войти']";
 
     public RestorePasswordPage(WebDriver driver) {
         super(driver);

@@ -2,63 +2,59 @@ import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import ru.yandex.pageobjects.LoginPage;
 import ru.yandex.pageobjects.MainPage;
 import ru.yandex.pageobjects.RegistrationPage;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.Assert.assertTrue;
 
 public class RegistrationTest extends BaseTest {
 
-    String name = "Sasha";
-    String email = "sashatest@test.ru";
-    String password = "1234567";
-    String notValidPassword = "123";
+    MainPage mainPage;
+    LoginPage loginPage;
+    RegistrationPage registrationPage;
+    UserApi userApi;
+    UserData userData;
+    String authToken;
+
+    @Before
+    public void setUp() {
+        mainPage = new MainPage(driver);
+        loginPage = new LoginPage(driver);
+        registrationPage = new RegistrationPage(driver);
+        userApi = new UserApi();
+        mainPage.clickLoginButton();
+        loginPage.clickRegistrationLink();
+    }
 
     @Test
     @DisplayName("User register succeed with valid data")
     @Description("Positive test of succeed to reg User")
     public void checkRegistrationTest() {
+        userData = UserGenarate.getRandomUser();
+        registrationPage.fillRegistrationForm(userData.getName(), userData.getEmail(), userData.getPassword());
+        Response response = userApi.loginUser(userData);
+        authToken = response.then().extract().path("accessToken");
+        assertTrue(loginPage.checkLoginButtonIsDisplayed());
 
-        MainPage mainPage = new MainPage(driver);
-        mainPage.clickLoginButton();
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.clickRegistrationLink();
-        RegistrationPage registrationPage = new RegistrationPage(driver);
-        registrationPage.fillRegistrationForm(name, email, password);
-        loginPage.checkRegistrationIsSucceed();
     }
 
     @Test
     @DisplayName("Not possible to reg User using a password less than 6 symbols")
     @Description("Negative test of no possibility to reg User if the length of password is less than 6 symbols")
     public void failedRegistrationNotValidPasswordTest() {
-
-        MainPage mainPage = new MainPage(driver);
-        mainPage.clickLoginButton();
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.clickRegistrationLink();
-        RegistrationPage registrationPage = new RegistrationPage(driver);
-        registrationPage.fillRegistrationForm(name, email, notValidPassword);
-        registrationPage.getNotValidPasswordNotification();
+        registrationPage.fillRegistrationForm("Sasha", "sashatest@test.ru", "123");
+        assertTrue(registrationPage.getNotValidPasswordNotification());
     }
 
 
     @After
-    public void deleteUser() {
-        UserData userData = new UserData(email, password);
-        Response response =
-                given()
-                        .header("Content-type", "application/json")
-                        .body(userData)
-                        .when()
-                        .post("https://stellarburgers.nomoreparties.site/api/auth/login");
-        if (response.then().extract().statusCode() == 200) {
-            String authToken = response.then().extract().body().path("accessToken");
-            given().header("Content-type", "application/json").header("Authorization", authToken)
-                    .when()
-                    .delete("https://stellarburgers.nomoreparties.site/api/auth/user");
+    public void cleanUp() {
+        if(authToken != null) {
+            userApi.deleteUser(authToken);
         }
     }
 

@@ -7,11 +7,17 @@ import org.openqa.selenium.WebDriver;
 public class ConstructorPage extends BasePage {
 
     //Ссылка Булки
-    private String bunsLink = ".//*[@id=\"root\"]/div/main/section[1]/div[1]/div[1]/span";
+    private String bunsLink = ".//span[text()='Булки']";
     //Ссылка Соусы
-    private String saucesLink = ".//*[@id=\"root\"]/div/main/section[1]/div[1]/div[2]/span";
+    private String saucesLink = ".//span[text()='Соусы']";
     //Ссылка Начинки
-    private String fillingsLink = ".//*[@id=\"root\"]/div/main/section[1]/div[1]/div[3]/span";
+    private String fillingsLink = ".//span[text()='Начинки']";
+    //Элемент для проверки перехода в раздел Булки
+    private String bunsSectorSwitched = ".//*[@id=\"root\"]/div/main/section[1]/div[1]/div[1]";
+    //Элемент для проверки перехода в раздел Соусы
+    private String soucesSectorSwitched = ".//*[@id=\"root\"]/div/main/section[1]/div[1]/div[2]";
+    //Элемент для проверки перехода в раздел Начинки
+    private String fillingsSectorSwitched = ".//*[@id=\"root\"]/div/main/section[1]/div[1]/div[3]";
 
     public ConstructorPage(WebDriver driver) {
         super(driver);
@@ -37,23 +43,23 @@ public class ConstructorPage extends BasePage {
 
     //Проверка, что сработал клик на ссылку Булки
     @Step("Section Buns is available")
-    public void checkBunsActive() {
+    public boolean checkBunsActive() {
         bunsLinkClick();
-        driver.findElement(By.xpath(".//*[@id=\"root\"]/div/main/section[1]/div[1]/div[1]")).isDisplayed();
+        return driver.findElement(By.xpath(bunsSectorSwitched)).isDisplayed();
     }
 
     //Проверку, что сработал клик на ссылку Соусы
     @Step("Section Sauces is available")
-    public void checkCaucesActive() {
+    public boolean checkCaucesActive() {
         saucesLinkClick();
-        driver.findElement(By.xpath(".//*[@id=\"root\"]/div/main/section[1]/div[1]/div[2]")).isDisplayed();
+        return driver.findElement(By.xpath(soucesSectorSwitched)).isDisplayed();
 
     }
 
     //Проверка, что сработал клик на ссылку Начинки
     @Step("Section Fillings is available")
-    public void checkFillingsActive() {
+    public boolean checkFillingsActive() {
         fillingsLinkClick();
-        driver.findElement(By.xpath(".//*[@id=\"root\"]/div/main/section[1]/div[1]/div[3]")).isDisplayed();
+        return driver.findElement(By.xpath(fillingsSectorSwitched)).isDisplayed();
     }
 }

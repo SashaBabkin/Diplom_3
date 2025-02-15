@@ -11,15 +11,15 @@ import java.time.Duration;
 public class LoginPage extends BasePage {
 
     //Поле Email
-    private String inputEmail = ".//*[@id=\"root\"]/div/main/div/form/fieldset[1]/div/div/input";
+    private String inputEmail = ".//input[@name='name']";
     //Поле Пароль
-    private String inputPassword = ".//*[@id=\"root\"]/div/main/div/form/fieldset[2]/div/div/input";
+    private String inputPassword = ".//input[@name='Пароль']";
     //Кнопка Войти
-    private String loginButton = ".//*[@id=\"root\"]/div/main/div/form/button";
+    private String loginButton = ".//button[text()='Войти']";
     //Ссылка "Зарегистрироваться"
-    private String registrationLink = ".//*[@id=\"root\"]/div/main/div/div/p[1]/a";
+    private String registrationLink = ".//a[text()='Зарегистрироваться']";
     //Ссылка "Восстановить пароль"
-    private String restorePasswordLink = ".//*[@id=\"root\"]/div/main/div/div/p[2]/a";
+    private String restorePasswordLink = ".//a[text()='Восстановить пароль']";
 
     public LoginPage(WebDriver driver) {
         super(driver);
@@ -54,8 +54,8 @@ public class LoginPage extends BasePage {
 
     //Проверка наличия кнопки "Войти"
     @Step("Checking the existence of Login button")
-    public void checkLoginButtonIsDisplayed() {
-        driver.findElement(By.xpath(loginButton)).isDisplayed();
+    public boolean checkLoginButtonIsDisplayed() {
+        return driver.findElement(By.xpath(loginButton)).isDisplayed();
     }
 
 

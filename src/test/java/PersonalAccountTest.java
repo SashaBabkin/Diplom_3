@@ -6,89 +6,76 @@ import org.junit.Before;
 import org.junit.Test;
 import ru.yandex.pageobjects.*;
 
-import static io.restassured.RestAssured.given;
+import static org.junit.Assert.assertTrue;
 
 public class PersonalAccountTest extends BaseTest {
 
-    String name = "Sasha";
-    String email = "sashatest@test.ru";
-    String password = "1234567";
+    MainPage mainPage;
+    LoginPage loginPage;
+    RegistrationPage registrationPage;
+    PersonalDataPage personalDataPage;
+    AccountPage accountPage;
+    UserApi userApi;
+    UserData userData;
+    String authToken;
+
 
     @Before
     public void regAndLoginUser() {
-
-        UserData userData = new UserData(email, password, name);
-        given()
-                .header("Content-type", "application/json")
-                .body(userData)
-                .when()
-                .post("https://stellarburgers.nomoreparties.site/api/auth/register");
-        driver.get(MainPage.URL);
-        MainPage mainPage = new MainPage(driver);
-        mainPage.clickLoginButton();
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.fillLoginForm(email, password);
+        mainPage = new MainPage(driver);
+        loginPage = new LoginPage(driver);
+        registrationPage = new RegistrationPage(driver);
+        personalDataPage = new PersonalDataPage(driver);
+        accountPage = new AccountPage(driver);
+        userApi = new UserApi();
+        userData = UserGenarate.getRandomUser();
+        Response response = userApi.createUser(userData);
+        authToken = response.then().extract().path("accessToken");
     }
 
     @Test
     @DisplayName("Switch to Personal account data page")
     @Description("Positive test of switching to Personal account data info")
     public void switchToPersonalAccountTest() {
-        AccountPage accountPage = new AccountPage(driver);
+        mainPage.clickLoginButton();
+        loginPage.fillLoginForm(userData.getEmail(), userData.getPassword());
         accountPage.switchToPersonalAccount();
-        PersonalDataPage personalDataPage = new PersonalDataPage(driver);
-        personalDataPage.checkProfileLink();
+        personalDataPage.waitOfVisibilityExitButton();
+        assertTrue(personalDataPage.exitButtonIsDisplayed());
     }
 
     @Test
     @DisplayName("Switch to Constructor via Link Constructor")
     @Description("Positive test of switching to Constructor using the Link Constructor")
     public void switchToConstructorWithLinkTest() {
-        AccountPage accountPage = new AccountPage(driver);
         accountPage.switchToPersonalAccount();
-        PersonalDataPage personalDataPage = new PersonalDataPage(driver);
         personalDataPage.clickConstructorLink();
-        personalDataPage.checkSwitchToConstructor();
+        assertTrue(personalDataPage.checkSwitchToConstructor());
     }
 
     @Test
     @DisplayName("Switch to Constructor via logo Stellar Burgers")
     @Description("Positive test of switching to Constructor using the logo of Stellar Burgers")
     public void switchToConstructorWithLogoTest() {
-        AccountPage accountPage = new AccountPage(driver);
         accountPage.switchToPersonalAccount();
-        PersonalDataPage personalDataPage = new PersonalDataPage(driver);
         personalDataPage.clickStellarBurgersLogo();
-        personalDataPage.checkSwitchToConstructor();
+        assertTrue(personalDataPage.checkSwitchToConstructor());
     }
 
     @Test
     @DisplayName("Exit the account via button Exit")
     @Description("Positive test of logging out the account using exit button")
     public void exitProfileTest() {
-        AccountPage accountPage = new AccountPage(driver);
         accountPage.switchToPersonalAccount();
-        PersonalDataPage personalDataPage = new PersonalDataPage(driver);
         personalDataPage.clickExitAccountButton();
         accountPage.switchToPersonalAccount();
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.checkLoginButtonIsDisplayed();
+        assertTrue(loginPage.checkLoginButtonIsDisplayed());
     }
 
     @After
-    public void deleteUser() {
-        UserData userData = new UserData(email, password);
-        Response response =
-                given()
-                        .header("Content-type", "application/json")
-                        .body(userData)
-                        .when()
-                        .post("https://stellarburgers.nomoreparties.site/api/auth/login");
-        if (response.then().extract().statusCode() == 200) {
-            String authToken = response.then().extract().body().path("accessToken");
-            given().header("Content-type", "application/json").header("Authorization", authToken)
-                    .when()
-                    .delete("https://stellarburgers.nomoreparties.site/api/auth/user");
+    public void cleanUp() {
+        if(authToken != null) {
+            userApi.deleteUser(authToken);
         }
     }
 }

@@ -12,9 +12,9 @@ import java.time.Duration;
 public class AccountPage extends BasePage {
 
     //Кнопка оформить заказ
-    private String makeOrderButton = ".//div[@class = 'BurgerConstructor_basket__container__2fUl3 mt-10']/button[text() = 'Оформить заказ']";
+    private String makeOrderButton = ".//button[text() = 'Оформить заказ']";
     //Ссылка "Личный кабинет"
-    private String personalAccountLink = ".//*[@id=\"root\"]/div/header/nav/a/p";
+    private String personalAccountLink = ".//p[text()='Личный Кабинет']";
 
     public AccountPage(WebDriver driver) {
         super(driver);
@@ -30,6 +30,12 @@ public class AccountPage extends BasePage {
     @Step("Click the Personal account link")
     public void switchToPersonalAccount() {
         driver.findElement(By.xpath(personalAccountLink)).click();
+    }
+
+    @Step("Wait till Main page is loaded")
+    public void waitLoadMainPage() {
+        new WebDriverWait(driver, 3).
+                until(ExpectedConditions.visibilityOfElementLocated(By.xpath(makeOrderButton)));
     }
 
 }
