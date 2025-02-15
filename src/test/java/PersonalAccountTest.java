@@ -66,7 +66,10 @@ public class PersonalAccountTest extends BaseTest {
     @DisplayName("Exit the account via button Exit")
     @Description("Positive test of logging out the account using exit button")
     public void exitProfileTest() {
+        mainPage.clickLoginButton();
+        loginPage.fillLoginForm(userData.getEmail(), userData.getPassword());
         accountPage.switchToPersonalAccount();
+        personalDataPage.waitOfVisibilityExitButton();
         personalDataPage.clickExitAccountButton();
         accountPage.switchToPersonalAccount();
         assertTrue(loginPage.checkLoginButtonIsDisplayed());

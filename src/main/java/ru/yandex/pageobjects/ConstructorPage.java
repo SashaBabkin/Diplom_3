@@ -13,11 +13,11 @@ public class ConstructorPage extends BasePage {
     //Ссылка Начинки
     private String fillingsLink = ".//span[text()='Начинки']";
     //Элемент для проверки перехода в раздел Булки
-    private String bunsSectorSwitched = ".//*[@id=\"root\"]/div/main/section[1]/div[1]/div[1]";
+    private String bunsSectorSwitched = ".//span[text()='Булки']/parent::div";
     //Элемент для проверки перехода в раздел Соусы
-    private String soucesSectorSwitched = ".//*[@id=\"root\"]/div/main/section[1]/div[1]/div[2]";
+    private String soucesSectorSwitched = ".//span[text()='Соусы']/parent::div";
     //Элемент для проверки перехода в раздел Начинки
-    private String fillingsSectorSwitched = ".//*[@id=\"root\"]/div/main/section[1]/div[1]/div[3]";
+    private String fillingsSectorSwitched = ".//span[text()='Начинки']/parent::div";
 
     public ConstructorPage(WebDriver driver) {
         super(driver);
